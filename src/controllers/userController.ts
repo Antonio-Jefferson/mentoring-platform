@@ -12,11 +12,11 @@ async function create(req: Request, res: Response, next: NextFunction){
   }
 }
 
-async function  getAll(req: Request, res: Response, next: NextFunction) {
+async function  findAll(req: Request, res: Response, next: NextFunction) {
   console.log("getAll")
 }
 
 export default {
   create,
-  getAll
+  findAll
 }

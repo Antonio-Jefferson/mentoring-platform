@@ -7,4 +7,5 @@ type CreateUserType = {
   role: UserRole;
 };
 
+
 export default CreateUserType;
