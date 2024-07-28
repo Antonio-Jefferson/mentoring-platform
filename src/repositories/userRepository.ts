@@ -35,8 +35,29 @@ export async function findAllMentors() {
   })
 }
 
+async function findByMentorId(mentorId: number) {
+  return await prisma.user.findUnique({
+    where: { id: mentorId },
+    select: {
+      name: true,
+      email: true,
+      skills: {
+        select: {
+          name: true,
+        },
+      },
+      sessionsMentor: {
+        select: {
+          rating: true,
+        },
+      },
+    },
+  });
+}
+
 export default {
   findByEmail,
   create,
-  findAllMentors
+  findAllMentors,
+  findByMentorId
 }

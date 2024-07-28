@@ -2,6 +2,7 @@ import CreateUserType from "../@types/types";
 import bcrypt from 'bcrypt';
 import userRepository from "../repositories/userRepository";
 import { duplicatedEmailError } from "./errors";
+import { notFoundError } from "../errors/notFoundError";
 
 async function create({name, email, password, role}: CreateUserType) {
   await validateUniqueEmailOrFail(email);
@@ -42,7 +43,29 @@ async function findAllMentors() {
   return mentorsWithRatings;
 }
 
+async function findByMentorId(mentorId:number) {
+  const mentor = await userRepository.findByMentorId(mentorId);
+
+  if (!mentor) throw notFoundError();
+
+  const ratings = mentor.sessionsMentor?.map(session => session.rating) || [];
+
+  const validRatings = ratings.filter(r => r !== null) as number[];
+
+  const averageRating = validRatings.length > 0
+    ? validRatings.reduce((acc, curr) => acc + curr, 0) / validRatings.length
+    : null;
+
+  return {
+    name: mentor.name,
+    email: mentor.email,
+    skills: mentor.skills.map(skill => skill.name),
+    averageRating: averageRating !== null ? parseFloat(averageRating.toFixed(1)) : null,
+  };
+}
+
 export default {
   create,
-  findAllMentors
+  findAllMentors,
+  findByMentorId
 };

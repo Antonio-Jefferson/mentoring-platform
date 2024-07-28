@@ -21,7 +21,18 @@ async function  findAllMentors(req: Request, res: Response, next: NextFunction) 
   }
 }
 
+async function findByMentorId(req: Request, res: Response, next: NextFunction) {
+  const { mentorId } = req.params
+  try {
+    const mentor = await userService.findByMentorId(Number(mentorId));
+    res.status(200).json(mentor);
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   create,
-  findAllMentors
+  findAllMentors,
+  findByMentorId
 }
