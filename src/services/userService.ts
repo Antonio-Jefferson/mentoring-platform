@@ -22,6 +22,27 @@ async function validateUniqueEmailOrFail(email: string) {
   }
 }
 
-export default {
-  create
+async function findAllMentors() {
+  const mentors = await userRepository.findAllMentors();
+  const mentorsWithRatings = mentors.map(mentor => {
+    const ratings = mentor.sessionsMentor
+      .map(session => session.rating)
+      .filter((r): r is number => r !== null);
+
+    const averageRating = ratings.length > 0
+      ? ratings.reduce((acc, curr) => acc + curr, 0) / ratings.length
+      : null;
+
+    return {
+      name: mentor.name,
+      averageRating: averageRating !== null ? parseFloat(averageRating.toFixed(1)) : null,
+    };
+  });
+
+  return mentorsWithRatings;
 }
+
+export default {
+  create,
+  findAllMentors
+};

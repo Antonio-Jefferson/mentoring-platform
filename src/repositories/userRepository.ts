@@ -21,7 +21,22 @@ async function create(data: Prisma.UserUncheckedCreateInput) {
   });
 }
 
+export async function findAllMentors() {
+  return await prisma.user.findMany({
+    where: { role: 'MENTOR' },
+    select: {
+      name: true,
+      sessionsMentor: {
+        select: {
+          rating: true,
+        },
+      },
+    },
+  })
+}
+
 export default {
   findByEmail,
-  create
+  create,
+  findAllMentors
 }

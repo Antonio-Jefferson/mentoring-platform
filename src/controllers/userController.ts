@@ -12,11 +12,16 @@ async function create(req: Request, res: Response, next: NextFunction){
   }
 }
 
-async function  findAll(req: Request, res: Response, next: NextFunction) {
-  console.log("getAll")
+async function  findAllMentors(req: Request, res: Response, next: NextFunction) {
+  try {
+    const mentors = await userService.findAllMentors();
+    res.status(200).json(mentors);
+  } catch (error) {
+    next(error);
+  }
 }
 
 export default {
   create,
-  findAll
+  findAllMentors
 }
