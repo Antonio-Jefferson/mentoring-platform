@@ -2,12 +2,14 @@ import express, { Express } from 'express';
 import cors from 'cors';
 
 import { connectDb, disconnectDB } from '../config/database';
+import routes from '../routes';
 
 const app = express();
 
 app
   .use(cors())
-  .use(express.json());
+  .use(express.json())
+  .use(routes);
 
   export function init(): Promise<Express> {
     connectDb();
