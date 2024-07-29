@@ -64,7 +64,6 @@ async function mentorExists(mentorId: number) {
 }
 
 async function addSkillToUser(userId: number, skillId: number){
-  // Adiciona a habilidade ao usuário
   return await prisma.user.update({
     where: { id: userId },
     data: {
@@ -84,6 +83,17 @@ async function userHasSkill(userId: number, skillId: number){
   return user?.skills.some((skill) => skill.id === skillId);
 }
 
+async function removeSkill(userId: number, skillId: number) {
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      skills: {
+        disconnect: { id: skillId },
+      },
+    },
+  });
+}
+
 
 export default {
   findByEmail,
@@ -92,5 +102,6 @@ export default {
   findByMentorId,
   mentorExists,
   addSkillToUser,
-  userHasSkill
+  userHasSkill,
+  removeSkill
 }

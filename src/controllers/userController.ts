@@ -61,9 +61,20 @@ async function addExistingSkill(skillId: number, userId: number) {
   await userRepository.addSkillToUser(userId, skillId);
 }
 
+async function removeSkill(req: Request, res: Response, next: NextFunction) {
+  const { userId, skillId } = req.body;
+  try {
+    await userService.removeSkill(userId, skillId);
+    res.sendStatus(200)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   create,
   findAllMentors,
   findByMentorId,
-  addSkill
+  addSkill,
+  removeSkill
 }

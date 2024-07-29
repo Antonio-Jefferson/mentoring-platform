@@ -64,8 +64,19 @@ async function findByMentorId(mentorId:number) {
   };
 }
 
+async function removeSkill(userId: number, skillId: number) {
+  const userHasSkill = await userRepository.userHasSkill(userId, skillId);
+  
+  if (!userHasSkill) {
+    throw notFoundError("Skill not found for this user");
+  }
+
+  await userRepository.removeSkill(userId, skillId)
+}
+
 export default {
   create,
   findAllMentors,
-  findByMentorId
+  findByMentorId,
+  removeSkill
 };
