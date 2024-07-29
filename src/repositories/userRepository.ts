@@ -63,11 +63,34 @@ async function mentorExists(mentorId: number) {
   });
 }
 
+async function addSkillToUser(userId: number, skillId: number){
+  // Adiciona a habilidade ao usuário
+  return await prisma.user.update({
+    where: { id: userId },
+    data: {
+      skills: {
+        connect: { id: skillId },
+      },
+    },
+  });
+}
+
+async function userHasSkill(userId: number, skillId: number){
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { skills: true },
+  });
+
+  return user?.skills.some((skill) => skill.id === skillId);
+}
+
 
 export default {
   findByEmail,
   create,
   findAllMentors,
   findByMentorId,
-  mentorExists
+  mentorExists,
+  addSkillToUser,
+  userHasSkill
 }

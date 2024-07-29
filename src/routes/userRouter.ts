@@ -6,6 +6,7 @@ import { createUserSchema } from "../schemas/userSchemas";
 const userRoutes = Router();
 
 userRoutes.post("/", validateBody(createUserSchema), userController.create);
+userRoutes.post('/add-skill', userController.addSkill)
 userRoutes.get("/mentors", userController.findAllMentors);
 userRoutes.get("/mentors/:mentorId", userController.findByMentorId);
 

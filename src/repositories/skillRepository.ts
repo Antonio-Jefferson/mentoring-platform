@@ -13,7 +13,31 @@ async function skillExists(skillId: number) {
   });
 }
 
+async function doesSkillExist(skill: string) {
+  return prisma.skill.findFirst({
+    where: {
+      name: skill,
+    },
+  });
+}
+
+
+async function createSkill(skill: string){
+  return await prisma.skill.create({
+    data: { name: skill },
+  });
+}
+
+async function skillExistsById(id: number){
+  return await prisma.skill.findUnique({
+    where: { id },
+  });
+}
+
 export default {
   findAllSkills,
-  skillExists
+  skillExists,
+  createSkill,
+  skillExistsById,
+  doesSkillExist
 }
