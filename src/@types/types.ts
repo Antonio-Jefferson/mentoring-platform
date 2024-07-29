@@ -1,11 +1,16 @@
-import { UserRole } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
 
-type CreateUserType = {
+export type CreateUserType = {
   name: string;
   email: string;
   password: string;
   role: UserRole;
 };
 
-
-export default CreateUserType;
+export type CreateSessionsRequest = {
+  mentorId: number;
+  menteeId: number;
+  skillId: number;
+  startTime: Date;
+  endTime: Date;
+}

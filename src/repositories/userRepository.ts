@@ -55,9 +55,19 @@ async function findByMentorId(mentorId: number) {
   });
 }
 
+async function mentorExists(mentorId: number) {
+  return prisma.user.findUnique({
+    where: {
+      id: mentorId,
+    },
+  });
+}
+
+
 export default {
   findByEmail,
   create,
   findAllMentors,
-  findByMentorId
+  findByMentorId,
+  mentorExists
 }

@@ -1,4 +1,4 @@
-import CreateUserType from "../@types/types";
+import { CreateUserType } from "../@types/types";
 import bcrypt from 'bcrypt';
 import userRepository from "../repositories/userRepository";
 import { duplicatedEmailError } from "./errors";
@@ -46,7 +46,7 @@ async function findAllMentors() {
 async function findByMentorId(mentorId:number) {
   const mentor = await userRepository.findByMentorId(mentorId);
 
-  if (!mentor) throw notFoundError();
+  if (!mentor) throw notFoundError("Not Found");
 
   const ratings = mentor.sessionsMentor?.map(session => session.rating) || [];
 

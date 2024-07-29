@@ -5,6 +5,15 @@ async function findAllSkills(): Promise<Skill[]> {
   return await prisma.skill.findMany();
 }
 
+async function skillExists(skillId: number) {
+  return prisma.skill.findUnique({
+    where: {
+      id: skillId,
+    },
+  });
+}
+
 export default {
-  findAllSkills
+  findAllSkills,
+  skillExists
 }
