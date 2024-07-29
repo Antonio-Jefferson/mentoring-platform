@@ -1,6 +1,6 @@
 import { UserRole } from '@prisma/client';
 import Joi from 'joi';
-import CreateUserType from "../@types/types";
+import { CreateUserType } from "../@types/types";
 
 export const createUserSchema = Joi.object<CreateUserType>({
   name: Joi.string().min(1).required(),

@@ -18,6 +18,19 @@ async function create(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function assessment(req: Request, res: Response, next: NextFunction) {
+  const { sessionId } = req.params
+  const { assessment } = req.body
+
+  try {
+    await sessionsService.assessment(Number(sessionId), Number(assessment))
+    res.sendStatus(201);
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
-  create
+  create,
+  assessment
 }

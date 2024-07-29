@@ -32,7 +32,24 @@ async function findConflictingSession(mentorId: number, startTime: Date, endTime
   });
 }
 
+async function sessionExist(id: number) {
+  const session = await prisma.session.findUnique({
+    where: { id },
+  });
+
+  return session;
+}
+
+async function assessment(id: number, assessment: number) {
+  await prisma.session.update({
+    where: { id },
+    data: { rating: assessment },
+  });
+}
+
 export default {
   create,
-  findConflictingSession
+  findConflictingSession,
+  sessionExist,
+  assessment
 }

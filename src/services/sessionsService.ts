@@ -6,7 +6,6 @@ import skillRepository from "../repositories/skillRepository";
 import { notFoundError } from '../errors/notFoundError';
 
 async function create({menteeId, mentorId, skillId, startTime, endTime}: CreateSessionsRequest) {
-  const conflictingSession = await sessionsRepository.findConflictingSession(mentorId, startTime, endTime);
 
   const mentor = await userRepository.mentorExists(mentorId);
   if (!mentor) {
@@ -18,6 +17,7 @@ async function create({menteeId, mentorId, skillId, startTime, endTime}: CreateS
     throw notFoundError("Skill not found");
   }
 
+  const conflictingSession = await sessionsRepository.findConflictingSession(mentorId, startTime, endTime);
   if (conflictingSession) {
     throw conflictError("Mentor is not available at the specified time");
   }
@@ -26,6 +26,18 @@ async function create({menteeId, mentorId, skillId, startTime, endTime}: CreateS
   return session;
 }
 
+async function assessment(sessionId:number, assessment: number) {
+  const session = await sessionsRepository.sessionExist(sessionId);
+
+  console.log({session})
+  if(!session){
+    throw notFoundError("session not found")
+  }
+
+  await sessionsRepository.assessment(sessionId, assessment)
+}
+
 export default {
-  create
+  create,
+  assessment
 }
