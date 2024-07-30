@@ -4,9 +4,9 @@ import sessionsRepository from "../repositories/sessionsRepository";
 import userRepository from "../repositories/userRepository";
 import skillRepository from "../repositories/skillRepository";
 import { notFoundError } from '../errors/notFoundError';
+import googleCalendar from "./googleCalendar";
 
-async function create({menteeId, mentorId, skillId, startTime, endTime}: CreateSessionsRequest) {
-
+async function create({ menteeId, mentorId, skillId, startTime, endTime }: CreateSessionsRequest) {
   const mentor = await userRepository.mentorExists(mentorId);
   if (!mentor) {
     throw notFoundError("Mentor not found");
@@ -22,9 +22,28 @@ async function create({menteeId, mentorId, skillId, startTime, endTime}: CreateS
     throw conflictError("Mentor is not available at the specified time");
   }
 
-  const session = await sessionsRepository.create({ menteeId, mentorId, skillId, startTime, endTime });
-  return session;
+  const event = {
+    summary: `Mentoring Session with Mentor ${mentor.name}`,
+    description: `Session on skill ${skill.name}`,
+    start: {
+      dateTime: startTime,
+      timeZone: 'America/Sao_Paulo',
+    },
+    end: {
+      dateTime: endTime,
+      timeZone: 'America/Sao_Paulo',
+    },
+  };
+
+  try {
+    await googleCalendar.createEvent(event);
+    const session = await sessionsRepository.create({ menteeId, mentorId, skillId, startTime, endTime });
+    return session;
+  } catch (error) {
+    console.error('Failed to create Google Calendar event:', error);
+  }
 }
+
 
 async function assessment(sessionId:number, assessment: number) {
   const session = await sessionsRepository.sessionExist(sessionId);

@@ -7,6 +7,7 @@ import { handleApplicationErrors } from '../middlewares/errorHandlingMiddleware'
 
 const app = express();
 
+
 app
   .use(cors())
   .use(express.json())
