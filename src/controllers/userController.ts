@@ -39,7 +39,7 @@ async function addSkill(req: Request, res: Response, next: NextFunction) {
   const {skillId, userId} = req.body;
   try {
     await addExistingSkill(Number(skillId), Number(userId));
-    res.status(200).send({ message: "Skill added successfully" });
+    res.sendStatus(200);
   } catch (error) {
     next(error)
   }

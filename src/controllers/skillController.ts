@@ -20,6 +20,7 @@ async function createSkill(req: Request, res:Response, next: NextFunction) {
     next(error)
   }
 }
+
 export default {
   findAll,
   createSkill

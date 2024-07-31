@@ -4,9 +4,12 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
+    "build": "tsc",
     "start": "nodemon src/server.ts",
     "dev": "tsx watch src/http/server.ts",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch"
   },
   "keywords": [],
   "author": "",
