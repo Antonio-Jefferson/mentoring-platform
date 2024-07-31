@@ -24,6 +24,13 @@ enum UserRole {
   MENTEE
 }
 
+enum SessionStatus {
+  PENDING
+  SCHEDULED
+  CANCELED
+  COMPLETED
+}
+
 model Skill {
   id       Int       @id @default(autoincrement())
   name     String
@@ -42,4 +49,5 @@ model Session {
   mentorId  Int
   menteeId  Int
   skillId   Int
+  status    SessionStatus @default(PENDING)
 }
