@@ -30,7 +30,19 @@ async function assessment(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function changeStatus(req: Request, res: Response, next: NextFunction) {
+  const { sessionId } = req.params;
+
+  try {
+    const updatedSession = await sessionsService.changeStatus(Number(sessionId));
+    res.status(200).send(updatedSession);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default {
   create,
-  assessment
+  assessment,
+  changeStatus
 }

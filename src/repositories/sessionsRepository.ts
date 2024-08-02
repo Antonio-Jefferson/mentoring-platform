@@ -46,9 +46,18 @@ async function assessment(id: number, assessment: number) {
   });
 }
 
+async function updateStatus(sessionId: number) {
+  return prisma.session.update({
+    where: { id: sessionId },
+    data: { status: 'SCHEDULED' },
+  });
+}
+
+
 export default {
   create,
   findConflictingSession,
   sessionExist,
-  assessment
+  assessment,
+  updateStatus
 }

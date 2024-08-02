@@ -22,25 +22,9 @@ async function create({ menteeId, mentorId, skillId, startTime, endTime }: Creat
   if (conflictingSession) {
     throw conflictError("Mentor is not available at the specified time");
   }
-
-  const event = {
-    summary: `Mentoria com o mentor ${mentor.name}`,
-    description: `Mentoria de ${skill.name}`,
-    start: {
-      dateTime: startTime,
-      timeZone: 'America/Sao_Paulo',
-    },
-    end: {
-      dateTime: endTime,
-      timeZone: 'America/Sao_Paulo',
-    },
-  };
-
-    await googleCalendar.createEvent(event);
     const session = await sessionsRepository.create({ menteeId, mentorId, skillId, startTime, endTime });
     return session;
 }
-
 
 async function assessment(sessionId:number, assessment: number) {
   const session = await sessionsRepository.sessionExist(sessionId);
@@ -51,7 +35,40 @@ async function assessment(sessionId:number, assessment: number) {
   await sessionsRepository.assessment(sessionId, assessment)
 }
 
+async function changeStatus(sessionId: number,) {
+  const session = await sessionsRepository.sessionExist(sessionId);
+
+  if (!session) {
+    throw notFoundError("Session not found");
+  }
+
+  const mentee = await userRepository.menteeExists(session.menteeId);
+  const skill = await skillRepository.skillExists(session.skillId);
+
+  const event = {
+    summary: `Mentoria com o ${mentee?.name}`,
+    description: `Mentoria de ${skill?.name}`,
+    start: {
+      dateTime: session.startTime,
+      timeZone: 'America/Sao_Paulo',
+    },
+    end: {
+      dateTime: session.endTime,
+      timeZone: 'America/Sao_Paulo',
+    },
+  };
+
+  const dataResponse = await googleCalendar.createEvent(event);
+  if(!dataResponse) {
+    console.log("Error", dataResponse)
+  }else{
+    const updatedSession = await sessionsRepository.updateStatus(sessionId);
+    return updatedSession;
+  }
+}
+
 export default {
   create,
-  assessment
+  assessment,
+  changeStatus
 }
