@@ -25,6 +25,7 @@ export async function findAllMentors() {
   return await prisma.user.findMany({
     where: { role: 'MENTOR' },
     select: {
+      id: true,
       name: true,
       sessionsMentor: {
         select: {
@@ -37,8 +38,9 @@ export async function findAllMentors() {
 
 async function findByMentorId(mentorId: number) {
   return await prisma.user.findUnique({
-    where: { id: mentorId },
+    where: { id: mentorId, role: 'MENTOR' },
     select: {
+      id: true,
       name: true,
       email: true,
       skills: {
@@ -55,10 +57,21 @@ async function findByMentorId(mentorId: number) {
   });
 }
 
+
 async function mentorExists(mentorId: number) {
   return prisma.user.findUnique({
     where: {
       id: mentorId,
+      role: 'MENTOR'
+    },
+  });
+}
+
+async function menteeExists(menteeId: number) {
+  return prisma.user.findUnique({
+    where: {
+      id: menteeId,
+      role: 'MENTEE'
     },
   });
 }
@@ -94,6 +107,20 @@ async function removeSkill(userId: number, skillId: number) {
   });
 }
 
+async function getMentorSchedule(mentorId: number) {
+  return await prisma.session.findMany({
+    where: { mentorId, status: 'SCHEDULED', },
+    include: { mentee: true },
+  });
+};
+
+async function getMenteeSchedule(menteeId: number) {
+  return await prisma.session.findMany({
+    where: { menteeId, status: 'SCHEDULED', },
+    include: { mentor: true },
+  });
+};
+
 
 export default {
   findByEmail,
@@ -101,7 +128,10 @@ export default {
   findAllMentors,
   findByMentorId,
   mentorExists,
+  menteeExists,
   addSkillToUser,
   userHasSkill,
-  removeSkill
+  removeSkill,
+  getMentorSchedule,
+  getMenteeSchedule,
 }

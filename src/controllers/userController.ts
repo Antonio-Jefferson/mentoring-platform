@@ -71,10 +71,36 @@ async function removeSkill(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function findMentorSchedule(req: Request, res: Response,  next: NextFunction) {
+  const { mentorId } = req.params;
+  try {
+    const schedule = await userService.findMentorSchedule(Number(mentorId));
+    res.status(200).send(schedule);
+  } catch (error) {
+    next(error);
+  }
+
+};
+
+async function findMenteeSchedule(req: Request, res: Response,  next: NextFunction) {
+  const { menteeId } = req.params;
+
+  try {
+    const schedule = await userService.findMenteeSchedule(Number(menteeId));
+    res.status(200).send(schedule);
+  } catch (error) {
+    next(error);
+  }
+
+};
+
+
 export default {
   create,
   findAllMentors,
   findByMentorId,
   addSkill,
-  removeSkill
+  removeSkill,
+  findMentorSchedule,
+  findMenteeSchedule
 }

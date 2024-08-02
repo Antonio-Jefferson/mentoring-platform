@@ -10,5 +10,8 @@ userRoutes.post('/add-skill', userController.addSkill);
 userRoutes.put('/skill', userController.removeSkill)
 userRoutes.get("/mentors", userController.findAllMentors);
 userRoutes.get("/mentors/:mentorId", userController.findByMentorId);
+userRoutes.get("/mentors/:mentorId/schedule", userController.findMentorSchedule);
+userRoutes.get("/mentees/:menteeId/schedule", userController.findMenteeSchedule);
+
 
 export default userRoutes;

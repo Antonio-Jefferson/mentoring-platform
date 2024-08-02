@@ -35,6 +35,7 @@ async function findAllMentors() {
       : null;
 
     return {
+      id: mentor.id,
       name: mentor.name,
       averageRating: averageRating !== null ? parseFloat(averageRating.toFixed(1)) : null,
     };
@@ -57,6 +58,7 @@ async function findByMentorId(mentorId:number) {
     : null;
 
   return {
+    id: mentor.id,
     name: mentor.name,
     email: mentor.email,
     skills: mentor.skills.map(skill => skill.name),
@@ -74,9 +76,19 @@ async function removeSkill(userId: number, skillId: number) {
   await userRepository.removeSkill(userId, skillId)
 }
 
+async function findMentorSchedule(mentorId: number) {
+  return await userRepository.getMentorSchedule(mentorId);
+};
+
+async function findMenteeSchedule (menteeId: number){
+  return await userRepository.getMenteeSchedule(menteeId);
+};
+
 export default {
   create,
   findAllMentors,
   findByMentorId,
-  removeSkill
+  removeSkill,
+  findMentorSchedule,
+  findMenteeSchedule,
 };
