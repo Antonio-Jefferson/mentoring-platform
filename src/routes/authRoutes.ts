@@ -1,5 +1,6 @@
 import express from 'express';
 import { getAuthUrl, getAccessToken } from '../services/googleAuth';
+import authController from '../controllers/authController';
 
 const router = express.Router();
 
@@ -19,6 +20,8 @@ router.get('/google/redirect', async (req, res) => {
     res.status(500).send('Authentication failed');
   }
 });
+
+router.post('/login', authController.login)
 
 export default router;
 

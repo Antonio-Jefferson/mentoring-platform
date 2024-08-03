@@ -109,17 +109,33 @@ async function removeSkill(userId: number, skillId: number) {
 
 async function getMentorSchedule(mentorId: number) {
   return await prisma.session.findMany({
-    where: { mentorId, status: 'SCHEDULED', },
-    include: { mentee: true },
+    where: { mentorId, status: 'SCHEDULED' },
+    include: {
+      mentee: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
   });
-};
+}
 
 async function getMenteeSchedule(menteeId: number) {
   return await prisma.session.findMany({
-    where: { menteeId, status: 'SCHEDULED', },
-    include: { mentor: true },
+    where: { menteeId, status: 'SCHEDULED' },
+    include: {
+      mentor: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
   });
-};
+}
 
 
 export default {

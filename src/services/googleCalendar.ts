@@ -9,10 +9,8 @@ async function createEvent(event: any) {
       calendarId: 'primary',
       requestBody: event,
     });
-    console.log(response.data)
     return response.data;
   } catch (error) {
-    console.error('Error creating calendar event:', error);
     throw error;
   }
 };
