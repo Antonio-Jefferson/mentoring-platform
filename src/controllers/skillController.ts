@@ -1,16 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import skillService from "../services/skillService";
+import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
-async function findAll(req: Request, res: Response, next: NextFunction) {
+
+async function findAll(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    const skills = await skillService.findAllSkills(); 
-    res.status(200).json(skills); 
+    const skills = await skillService.findAllSkills();
+    res.status(200).json(skills);
   } catch (error) {
     next(error);
   }
 }
 
-async function createSkill(req: Request, res:Response, next: NextFunction) {
+async function createSkill(req: AuthenticatedRequest, res:Response, next: NextFunction) {
   const { skill } = req.body
   const { userId } = req.params
   try {
