@@ -21,6 +21,13 @@ describe('UserService', () => {
         role: 'MENTOR',
       };
 
+      const userDataRes = {
+        id: 1,
+        name: 'John Doe',
+        email: 'john@example.com',
+        role: 'MENTOR',
+      };
+
       jest.spyOn(userRepository, 'findByEmail').mockResolvedValue(null);
       jest.spyOn(userRepository, 'create').mockResolvedValue(userData);
 
@@ -33,7 +40,7 @@ describe('UserService', () => {
         password: expect.any(String),
         role: userData.role,
       });
-      expect(result).toEqual(userData);
+      expect(result).toEqual(userDataRes);
     });
 
     it('should throw duplicatedEmailError if the email is already in use', async () => {
