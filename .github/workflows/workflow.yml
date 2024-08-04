@@ -20,6 +20,6 @@ jobs:
           node-version: 16
       - name: Install dependencies, build, and test
         run: |
-          npm install
+          npm ci
           npm run build
           npm test

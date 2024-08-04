@@ -98,7 +98,7 @@ git clone git@github.com:Antonio-Jefferson/mentoring-platform.git
 #### 3. Instale as dependências do projeto:
 
 ```bash
-npm install
+npm ci
 ```
 ## 2. Configurações do Ambiente
   Certifique-se de configurar as variáveis necessárias no arquivo .env. Um exemplo do arquivo .env.example pode estar disponível no repositório para referência.
