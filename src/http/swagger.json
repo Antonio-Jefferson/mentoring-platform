@@ -1,0 +1,940 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Mentoring Platform API",
+    "version": "1.0.0",
+    "description": "API documentation for the Mentoring Platform",
+    "contact": {
+      "email": "antjeffersonbatista@gmail.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "API de Test"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "summary": "Create a new user",
+        "description": "Creates a new user in the system",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { "$ref": "#/components/schemas/Mentor" },
+                  { "$ref": "#/components/schemas/Mentee" }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Email already in use"
+          }
+        }
+      }
+    },
+    "/users/mentors": {
+      "get": {
+        "summary": "Get all mentors",
+        "description": "Retrieve a list of all mentors with their average ratings",
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of mentors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FindMentor"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/mentors/{mentorId}": {
+      "get": {
+        "summary": "Get mentor by ID",
+        "description": "Retrieve a mentor by their ID along with their average rating and skills",
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "mentorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the mentor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A mentor object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MentorDetail"
+                }
+              }
+            },
+            "404": {
+              "description": "Mentor not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/add-skill": {
+      "post": {
+        "summary": "Add a skill to a user",
+        "description": "Add an existing skill to a user",
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSkill"
+              },
+              "examples": {
+                "valid": {
+                  "summary": "A valid request",
+                  "value": {
+                    "userId": 1,
+                    "skillId": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Skill added successfully"
+          },
+          "404": {
+            "description": "Skill or user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Skill already added to user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove a skill from a user",
+        "description": "Remove an existing skill from a user",
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSkill"
+              },
+              "examples": {
+                "valid": {
+                  "summary": "A valid request",
+                  "value": {
+                    "userId": 1,
+                    "skillId": 2
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Skill removed successfully"
+            },
+            "404": {
+              "description": "Skill or user not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/mentors/{mentorId}/schedule": {
+      "get": {
+        "summary": "Get mentor schedule",
+        "description": "Retrieve the schedule of a mentor by their ID",
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "mentorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the mentor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mentor schedule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Mentor not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/mentees/{menteeId}/schedule": {
+      "get": {
+        "summary": "Get mentee schedule",
+        "description": "Retrieve the schedule of a mentee by their ID",
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menteeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the mentee"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mentee schedule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleMentee"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Mentee not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Authenticate user and return a token",
+        "tags": ["Login"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "post": {
+        "summary": "Create a new session",
+        "description": "Creates a new mentorship session",
+        "tags": ["Sessions"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSession"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/sessions/{sessionId}/assessment": {
+      "post": {
+        "summary": "Assess a session",
+        "description": "Add an assessment to a completed session",
+        "tags": ["Sessions"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the session"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Assessment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Assessment added successfully"
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        }
+      }
+    },
+    "/sessions/{sessionId}/status": {
+      "patch": {
+        "summary": "Change session status",
+        "description": "Update the status of a session",
+        "tags": ["Sessions"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the session"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        }
+      }
+    },
+    "/skills": {
+      "get": {
+        "summary": "Get all skills",
+        "description": "Retrieve a list of all skills",
+        "tags": ["Skills"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of skills",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Skill"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/skills/{userId}": {
+      "post": {
+        "summary": "Add skill",
+        "description": "Add a new skill",
+        "tags": ["Skills"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID of the user to add the skill to"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "skill": {
+                    "type": "string",
+                    "example": "Php"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Skill created successfully",
+            "schema": {
+              "$ref": "#/schemas/SkillAdd"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateUser": {
+        "type": "object",
+        "required": ["name", "email", "password", "role"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Antônio Jefferson"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "antjeffersonbatista@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["MENTOR", "MENTEE"],
+            "example": "MENTOR"
+          }
+        },
+        "discriminator": {
+          "propertyName": "role",
+          "mapping": {
+            "mentor": "#/components/schemas/Mentor",
+            "mentee": "#/components/schemas/Mentee"
+          }
+        }
+      },
+      "Mentor": {
+        "allOf": [
+          { "$ref": "#/components/schemas/User" }
+        ]
+      },
+      "Mentee": {
+        "allOf": [
+          { "$ref": "#/components/schemas/User" }
+        ]
+      },
+      "User": {
+        "type": "object",
+        "required": ["id", "name", "email"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Antônio Jefferson"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "antjeffersonbatista@gmail.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["MENTOR", "MENTEE"],
+            "example": "MENTOR"
+          }
+        }
+      },
+      "FindMentor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Barry Allen"
+          },
+          "averageRating": {
+            "type": "number",
+            "format": "float",
+            "example": 8.4
+          }
+        }
+      },
+      "MentorDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Barry Allen"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "JavaScript"
+            }
+          },
+          "averageRating": {
+            "type": "number",
+            "format": "float",
+            "example": 8.4
+          }
+        }
+      },
+      "UserSkill": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "example": 1
+          },
+          "skillId": {
+            "type": "integer",
+            "example": 2
+          },
+          "skillName": {
+            "type": "string",
+            "example": "Java"
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "mentorId": {
+            "type": "integer",
+            "example": 1
+          },
+          "menteeId": {
+            "type": "integer",
+            "example": 2
+          },
+          "skillId": {
+            "type": "integer",
+            "example": 3
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-04T14:30:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-04T15:30:00Z"
+          },
+          "rating": {
+            "type": "integer",
+            "example": 5
+          },
+          "status": {
+            "type": "string",
+            "example": "PENDING"
+          },
+          "mentee": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "name": {
+                "type": "string",
+                "example": "antonio jefferson"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "antjefferson@gamil.com"
+              }
+            }
+          }
+        }
+      },
+      "ScheduleMentee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "mentorId": {
+            "type": "integer",
+            "example": 1
+          },
+          "menteeId": {
+            "type": "integer",
+            "example": 2
+          },
+          "skillId": {
+            "type": "integer",
+            "example": 3
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-04T14:30:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-04T15:30:00Z"
+          },
+          "rating": {
+            "type": "integer",
+            "example": 5
+          },
+          "status": {
+            "type": "string",
+            "example": "PENDING"
+          },
+          "mentor": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "name": {
+                "type": "string",
+                "example": "Barry Allen"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "barry@gmail.com"
+              }
+            }
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "mentorId": {
+            "type": "integer",
+            "example": 1
+          },
+          "menteeId": {
+            "type": "integer",
+            "example": 2
+          },
+          "skillId": {
+            "type": "integer",
+            "example": 3
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-04T14:30:00Z"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-04T15:30:00Z"
+          },
+          "rating": {
+            "type": "integer",
+            "example": 5
+          },
+          "status": {
+            "type": "string",
+            "example": "PENDING"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "An error occurred"
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "barry@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "senharsecreta"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "CreateSession": {
+        "type": "object",
+        "properties": {
+          "mentorId": {
+            "type": "integer"
+          },
+          "menteeId": {
+            "type": "integer"
+          },
+          "skillId": {
+            "type": "integer"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["mentorId", "menteeId", "skillId", "startTime", "endTime"]
+      },
+      "Assessment": {
+        "type": "object",
+        "properties": {
+          "assessment": {
+            "type": "integer"
+          }
+        },
+        "required": ["assessment"]
+      },
+      "Skill": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "SkillAdd": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "userId": {
+            "type": "integer",
+            "example": 10
+          },
+          "skill": {
+            "type": "string",
+            "example": "Php"
+          }
+        }
+      },
+      "AuthToken": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

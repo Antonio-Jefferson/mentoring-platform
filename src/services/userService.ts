@@ -8,12 +8,15 @@ async function create({name, email, password, role}: CreateUserType) {
   await validateUniqueEmailOrFail(email);
 
   const hashedPassword = await bcrypt.hash(password, 12);
-  return userRepository.create({
+  const user = await userRepository.create({
     name,
     email,
     password: hashedPassword,
-    role
+    role,
   });
+
+  const { password: _, ...userWithoutPassword } = user;
+  return userWithoutPassword;
 }
 
 async function validateUniqueEmailOrFail(email: string) {
